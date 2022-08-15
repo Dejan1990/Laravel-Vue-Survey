@@ -42,7 +42,7 @@
                   <MenuItems class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <MenuItem v-slot="{ active }">
                       <a @click="logout" :class="['block px-4 py-2 text-sm text-gray-700 cursor-pointer']">
-                        Logout
+                        Sign out
                       </a>
                     </MenuItem>
                   </MenuItems>
@@ -87,7 +87,7 @@
             <DisclosureButton as="a"
                               @click="logout"
                               class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 cursor-pointer hover:text-white hover:bg-gray-700">
-              Logout
+              logout
             </DisclosureButton>
           </div>
         </div>
@@ -127,16 +127,16 @@ export default {
     const store = useStore();
     const router = useRouter();
     function logout(){
-      store.commit('logout');
+      store.commit('logout'); //commit a mutation
       router.push({
-        name: 'Login'
+        name: 'Login',
       })
     }
 
     return {
       user: computed(() => store.state.user.data),
       navigation,
-      logout
+      logout,
     }
   },
 }
