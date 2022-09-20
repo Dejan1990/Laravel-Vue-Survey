@@ -98,7 +98,7 @@
       </DisclosurePanel>
     </Disclosure>
 
-    <router-view></router-view>
+    <router-view :key="$route.path"></router-view>
   </div>
 </template>
 
