@@ -3,7 +3,7 @@
     <div>
       <div>
         <div>
-          <form action="#" method="POST">
+          <form @submit.prevent="saveSurvey">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
               <!-- Survey Fields -->
               <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
@@ -62,6 +62,7 @@
                     name="title"
                     id="title"
                     v-model="surveyData.title"
+                    autocomplete="survey_title"
                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   />
                 </div>
@@ -81,6 +82,7 @@
                       name="description"
                       rows="3"
                       v-model="surveyData.description"
+                      autocomplete="survey_description"
                       class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                       placeholder="Describe your survey"
                     />
@@ -96,7 +98,7 @@
                     >Expire Date</label
                   >
                   <input
-                    type="date"
+                    type="datetime"
                     name="expire_date"
                     id="expire_date"
                     v-model="surveyData.expire_date"
@@ -160,6 +162,7 @@
                   <QuestionEditor
                     :question="question"
                     :index="index"
+                    @change="questionChange"
                     @addQuestion="addQuestion"
                     @deleteQuestion="deleteQuestion"
                   />
@@ -183,6 +186,7 @@
 </template>
 
 <script setup>
+import {v4 as uuidv4} from 'uuid'
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import store from "../store";
@@ -192,13 +196,14 @@ import QuestionEditor from "../components/editor/QuestionEditor.vue";
 const route = useRoute();
 
 let surveyData;
+let survey;
 
 if (route.params.id) {
-  const survey = computed(() =>
+  survey = computed(() =>
     store.state.surveys.find((s) => s.id === parseInt(route.params.id))
   );
   surveyData = ref({
-    ...survey.value,
+    ...JSON.parse(JSON.stringify(survey.value)),
     status: survey.value.status !== "draft",
   });
 } else {
@@ -214,6 +219,7 @@ if (route.params.id) {
 
 function addQuestion(index) {
   const newQuestion = {
+    id: uuidv4(),
     type: "text",
     question: "",
     description: null,
@@ -225,5 +231,18 @@ function addQuestion(index) {
 
 function deleteQuestion(question) {
   surveyData.value.questions = surveyData.value.questions.filter((q) => q !== question);
+}
+
+function questionChange(question) {
+  surveyData.value.questions = surveyData.value.questions.map(q => {
+    if (q.id === question.id) {
+      return JSON.parse(JSON.stringify(question));
+    }
+    return q;
+  })
+}
+
+function saveSurvey() {
+  console.log(JSON.stringify(surveyData.value, undefined, 2));
 }
 </script>
