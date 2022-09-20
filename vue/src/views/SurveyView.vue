@@ -13,7 +13,14 @@
                     Image
                   </label>
                   <div class="mt-1 flex items-center">
+                    <img
+                      v-if="surveyData.image"
+                      :src="surveyData.image"
+                      :alt="surveyData.title"
+                      class="w-64 h-48 object-cover"
+                    />
                     <span
+                      v-else
                       class="flex items-center justify-center h-12 w-12 rounded-full overflow-hidden bg-gray-100"
                     >
                       <svg
