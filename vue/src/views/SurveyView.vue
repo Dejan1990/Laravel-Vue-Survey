@@ -1,5 +1,5 @@
 <template>
-  <PageComponent :title="survey.title">
+  <PageComponent :title="surveyData.title">
     <div>
       <div>
         <div>
@@ -54,6 +54,7 @@
                     type="text"
                     name="title"
                     id="title"
+                    v-model="surveyData.title"
                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   />
                 </div>
@@ -72,6 +73,7 @@
                       id="description"
                       name="description"
                       rows="3"
+                      v-model="surveyData.description"
                       class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                       placeholder="Describe your survey"
                     />
@@ -90,6 +92,7 @@
                     type="date"
                     name="expire_date"
                     id="expire_date"
+                    v-model="surveyData.expire_date"
                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   />
                 </div>
@@ -102,6 +105,7 @@
                       id="status"
                       name="status"
                       type="checkbox"
+                      v-model="surveyData.status"
                       class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                     />
                   </div>
@@ -142,11 +146,11 @@
                   </button>
                   <!--/ Add new question -->
                 </h3>
-                <div v-if="!survey.questions.length" class="text-center text-gray-600">
+                <div v-if="!surveyData.questions.length" class="text-center text-gray-600">
                   You don't have any questions created
                 </div>
                 <div
-                  v-for="(question, index) in survey.questions"
+                  v-for="(question, index) in surveyData.questions"
                   :key="question.id"
                 >
                   <QuestionEditor
@@ -175,18 +179,22 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import store from "../store";
 import PageComponent from "../components/PageComponent.vue";
 import QuestionEditor from "../components/editor/QuestionEditor.vue";
 
-const router = useRouter();
 const route = useRoute();
 
 const survey = computed(() =>
   store.state.surveys.find((s) => s.id === parseInt(route.params.id))
 );
+
+const surveyData = ref({
+  ...survey.value,
+  status: survey.value.status !== 'draft'
+});
 
 function addQuestion(index) {
   const newQuestion = {
@@ -195,10 +203,11 @@ function addQuestion(index) {
     description: null,
     data: {},
   };
-  survey.value.questions.splice(index, 0, newQuestion);
+
+  surveyData.value.questions.splice(index, 0, newQuestion);
 }
 
 function deleteQuestion(question) {
-  survey.value.questions = survey.value.questions.filter((q) => q !== question);
+  surveyData.value.questions = surveyData.value.questions.filter((q) => q !== question);
 }
 </script>
