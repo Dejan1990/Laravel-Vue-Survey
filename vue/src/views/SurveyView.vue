@@ -1,5 +1,5 @@
 <template>
-  <PageComponent :title="surveyData.title">
+  <PageComponent :title="surveyData.id ? surveyData.title : 'Create a Survey'">
     <div>
       <div>
         <div>
@@ -118,9 +118,6 @@
                   </div>
                   <div class="ml-3 text-sm">
                     <label for="status" class="font-medium text-gray-700">Active</label>
-                    <p class="text-gray-500">
-                      Active survey and make it public
-                    </p>
                   </div>
                 </div>
                 <!--/ Status -->
@@ -194,14 +191,26 @@ import QuestionEditor from "../components/editor/QuestionEditor.vue";
 
 const route = useRoute();
 
-const survey = computed(() =>
-  store.state.surveys.find((s) => s.id === parseInt(route.params.id))
-);
+let surveyData;
 
-const surveyData = ref({
-  ...survey.value,
-  status: survey.value.status !== 'draft'
-});
+if (route.params.id) {
+  const survey = computed(() =>
+    store.state.surveys.find((s) => s.id === parseInt(route.params.id))
+  );
+  surveyData = ref({
+    ...survey.value,
+    status: survey.value.status !== "draft",
+  });
+} else {
+  surveyData = ref({
+    title: "",
+    status: false,
+    description: null,
+    image: null,
+    expire_date: null,
+    questions: [],
+  })
+}
 
 function addQuestion(index) {
   const newQuestion = {

@@ -64,16 +64,7 @@
         v-model="questionData.question"
         @change="dataChange"
         :id="'question_text_' + questionData.data"
-        class="
-          mt-1
-          focus:ring-indigo-500 focus:border-indigo-500
-          block
-          w-full
-          shadow-sm
-          sm:text-sm
-          border-gray-300
-          rounded-md
-        "
+        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
       />
     </div>
     <!--/ Question -->
@@ -87,20 +78,8 @@
         id="question_type"
         name="question_type"
         v-model="questionData.type"
-        @change="dataChange"
-        class="
-          mt-1
-          block
-          w-full
-          py-2
-          px-3
-          border border-gray-300
-          bg-white
-          rounded-md
-          shadow-sm
-          focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
-          sm:text-sm
-        "
+        @change="typeChange"
+        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       >
         <option v-for="type in questionTypes" :key="type" :value="type">
           {{ upperCaseFirst(type) }}
@@ -122,16 +101,7 @@
       v-model="questionData.description"
       @change="dataChange"
       :id="'question_description_' + questionData.id"
-      class="
-        mt-1
-        focus:ring-indigo-500 focus:border-indigo-500
-        block
-        w-full
-        shadow-sm
-        sm:text-sm
-        border-gray-300
-        rounded-md
-      "
+      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
     />
   </div>
   <!--/ Question Description -->
@@ -146,17 +116,7 @@
         <button
           type="button"
           @click="addOption()"
-          class="
-            flex
-            items-center
-            text-xs
-            py-1
-            px-2
-            rounded-sm
-            text-white
-            bg-gray-600
-            hover:bg-gray-700
-          "
+          class="flex items-center text-xs py-1 px-2 rounded-sm text-white bg-gray-600 hover:bg-gray-700"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -190,32 +150,14 @@
           type="text"
           v-model="option.text"
           @change="dataChange"
-          class="
-            w-full
-            rounded-md
-            py-1
-            px-2
-            text-xs
-            border border-gray-300
-            focus:border-indigo-500
-          "
+          class="w-full rounded-md py-1 px-2 text-xs border border-gray-300 focus:border-indigo-500"
         />
 
         <!-- Delete Option -->
         <button
           type="button"
           @click="removeOption(option)"
-          class="
-            h-6
-            w-6
-            rounded-full
-            flex
-            items-center
-            justify-center
-            border border-transparent
-            transition-colors
-            hover:border-red-100
-          "
+          class="h-6 w-6 rounded-full flex items-center justify-center border border-transparent transition-colors hover:border-red-100"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -252,12 +194,26 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["change", "addQuestion", "deleteQuestion"]);
+
 const questionData = ref({ ...props.question });
+
 // Get question types from vuex
 const questionTypes = computed(() => store.state.questionTypes);
+
 function upperCaseFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+function typeChange() {
+  if (shouldHaveOptions()) {
+    questionData.value.data = {
+      ...questionData.value.data,
+      options: []
+    }
+  }
+  dataChange();
+}
+
 // Emit the data change
 function dataChange() {
   const data = JSON.parse(JSON.stringify(questionData.value));
