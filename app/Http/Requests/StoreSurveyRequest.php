@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use App\Models\Survey;
 
 class StoreSurveyRequest extends FormRequest
 {
@@ -35,7 +38,11 @@ class StoreSurveyRequest extends FormRequest
             'user_id' => 'exists:users,id',
             'status' => 'required|boolean',
             'description' => 'nullable|string',
-            'expire_date' => 'nullable|date|after:tomorrow'
+            'expire_date' => 'nullable|date|after:tomorrow',
+            'questions.*.question' => 'required|string',
+            'questions.*.type' => ['required', Rule::in([Survey::TYPE_TEXT, Survey::TYPE_TEXTAREA, Survey::TYPE_SELECT, Survey::TYPE_RADIO, Survey::TYPE_CHECKBOX, ])],
+            'questions.*.description' => 'nullable|string',
+            'questions.*.data' => 'TODO',
         ];
     }
 }
