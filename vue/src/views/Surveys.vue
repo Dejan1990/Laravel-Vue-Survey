@@ -89,4 +89,6 @@ import { computed } from "vue";
 import PageComponent from "../components/PageComponent.vue";
 
 const surveys = computed(() => store.state.surveys);
+
+store.dispatch('getSurveys')
 </script>
