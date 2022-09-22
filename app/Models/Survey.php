@@ -17,12 +17,17 @@ class Survey extends Model
     const TYPE_RADIO = 'radio';
     const TYPE_CHECKBOX = 'checkbox';
 
-    protected $fillable = ['user_id', 'title', 'slug', 'status', 'description', 'expire_date'];
+    protected $fillable = ['user_id', 'title', 'slug', 'image', 'status', 'description', 'expire_date'];
 
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
+    }
+
+    public function questions()
+    {
+        return $this->hasMany(SurveyQuestion::class);
     }
 }
