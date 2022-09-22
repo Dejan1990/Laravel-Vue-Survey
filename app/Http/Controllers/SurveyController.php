@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\SurveyResource;
 use App\Http\Requests\StoreSurveyRequest;
 use App\Http\Requests\UpdateSurveyRequest;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class SurveyController extends Controller
 {
@@ -71,6 +73,14 @@ class SurveyController extends Controller
     public function update(UpdateSurveyRequest $request, Survey $survey)
     {
         $data = $request->validated();
+
+        // Check if image was given and save on local file system
+        if (isset($data['image'])) {
+            $relativePath = $this->saveImage($data['image']);
+            $data['image'] = $relativePath;
+        }
+
+        // Update survey in the database
         $survey->update($data);
 
         $existingIds = $survey->questions()->pluck('id')->toArray();
@@ -175,5 +185,43 @@ class SurveyController extends Controller
         ]);
 
         return $question->update($validator->validated());
+    }
+
+    /**
+     * Save image in local file system and return saved image path
+     *
+     * @param $image
+     * @throws \Exception
+     * @author Zura Sekhniashvili <zurasekhniashvili@gmail.com>
+     */
+    private function saveImage($image)
+    {
+        if (preg_match('/^data:image\/(\w+);base64,/', $image, $type)) {
+            $image = substr($image, strpos($image, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
+
+            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                throw new \Exception('invalid image type');
+            }
+            $image = str_replace(' ', '+', $image);
+            $image = base64_decode($image);
+
+            if ($image === false) {
+                throw new \Exception('base64_decode failed');
+            }
+        } else {
+            throw new \Exception('did not match data URI with image data');
+        }
+
+        $dir = 'images/';
+        $file = Str::random() . '.' . $type;
+        $absolutePath = public_path($dir);
+        $relativePath = $dir . $file;
+        if (!File::exists($absolutePath)) {
+            File::makeDirectory($absolutePath, 0755, true);
+        }
+        file_put_contents($relativePath, $image);
+
+        return $relativePath;
     }
 }
