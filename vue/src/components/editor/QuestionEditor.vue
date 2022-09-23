@@ -148,6 +148,7 @@
         <span class="w-6 text-sm"> {{ index + 1 }}. </span>
         <input
           type="text"
+          tabindex="1"
           v-model="option.text"
           @change="dataChange"
           class="w-full rounded-sm py-1 px-2 text-xs border border-gray-300 focus:border-indigo-500"
