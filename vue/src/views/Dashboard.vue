@@ -38,12 +38,24 @@
         />
         <h3 class="font-bold text-xl mb-3">{{ data.latestSurvey.title }}</h3>
         <div class="flex justify-between text-sm mb-1">
-          <div>Upload Date:</div>
+          <div>Create Date:</div>
           <div>{{ data.latestSurvey.created_at }}</div>
+        </div>
+        <div class="flex justify-between text-sm mb-1">
+          <div>Expire Date:</div>
+          <div>{{ data.latestSurvey.expire_date }}</div>
+        </div>
+        <div class="flex justify-between text-sm mb-1">
+          <div>Status:</div>
+          <div>{{ data.latestSurvey.status ? 'Active' : 'Draft' }}</div>
+        </div>
+        <div class="flex justify-between text-sm mb-1">
+          <div>Questions:</div>
+          <div>{{ data.latestSurvey.questions }}</div>
         </div>
         <div class="flex justify-between text-sm mb-3">
           <div>Answers:</div>
-          <div>{{ data.totalAnswers }}</div>
+          <div>{{ data.latestSurvey.answers }}</div>
         </div>
         <div class="flex justify-between">
           <router-link
@@ -87,7 +99,6 @@
           </button>
         </div>
 
-        <!-- <SurveyListItem :survey="data.latestSurvey" class="row-span-2"/> -->
       </div>
       <div
         class="bg-white shadow-md p-3 row-span-2 order-4 lg:order-3 animate-fade-in-down"
@@ -106,13 +117,13 @@
           href="#"
           v-for="answer of data.latestAnswers"
           :key="answer.id"
-          class="block p-2 hover:bg-gray-100/90 cursor-pointer :bg-gray-200"
+          class="block p-2 hover:bg-gray-100/90"
         >
           <div class="font-semibold">{{ answer.survey.title }}</div>
-          <small
-            >Answer Made at:
-            <i class="font-semibold">{{ answer.end_date }}</i></small
-          >
+          <small>
+            Answer Made at:
+            <i class="font-semibold">{{ answer.end_date }}</i>
+          </small>
         </a>
       </div>
     </div>
@@ -123,7 +134,6 @@
 import { computed } from '@vue/reactivity';
 import {useStore} from 'vuex'
 import PageComponent from "../components/PageComponent.vue";
-import SurveyListItem from '../components/SurveyListItem.vue';
 
 const store = useStore();
 const loading = computed(() => store.state.dashboard.loading);
