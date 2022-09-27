@@ -12,10 +12,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::resource('/survey', SurveyController::class);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/survey-by-slug/{survey:slug}', [SurveyController::class, 'show']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
 });
+
+Route::get('/survey-by-slug/{survey:slug}', [SurveyController::class, 'showForGuest']);
 
 Route::post('/survey/{survey}/answer', [SurveyController::class, 'storeAnswer']);
 
