@@ -20,7 +20,7 @@ axiosClient.interceptors.response.use(response => {
   } else if (error.response.status === 404) {
     router.push({name: 'NotFound'})
   }
-  return error;
+  throw error;
 })
 
 export default axiosClient;
