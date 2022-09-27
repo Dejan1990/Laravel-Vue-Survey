@@ -308,10 +308,16 @@ function questionChange(question) {
  * Create or update survey
  */
 function saveSurvey() {
+  let action = "created";
+
+  if (model.value.id) {
+    action = "updated";
+  }
+
   store.dispatch("saveSurvey", { ...model.value }).then(({ data }) => {
     store.commit("notify", {
       type: "success",
-      message: "The survey was successfully updated",
+      message: "The survey was successfully " + action,
     });
     router.push({
       name: "SurveyView",
